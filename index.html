@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGI Carmak — Checklist de Auditoria</title>
+<style>
+  :root {
+    --verde: #003938;
+    --verde-claro: #005C5A;
+    --verde-hover: #004D4B;
+    --azul: #0D47A1;
+    --cinza: #212121;
+    --cinza-medio: #616161;
+    --cinza-claro: #F5F5F5;
+    --borda: #E0E0E0;
+    --vermelho: #C62828;
+    --laranja: #EF6C00;
+    --amarelo: #F9A825;
+    --destaque: rgba(0, 57, 56, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #FAFAFA;
+    color: var(--cinza);
+    line-height: 1.45;
+    font-size: 14px;
+  }
+
+  /* ========== TELA DE PREENCHIMENTO ========== */
+  .no-print { display: block; }
+  .print-only { display: none; }
+
+  header.app-header {
+    background: linear-gradient(135deg, #003938 0%, #002625 100%);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  header.app-header h1 { font-size: 1.25rem; font-weight: 700; }
+  header.app-header .subtitle { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; }
+
+  /* Identificação */
+  .card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--borda);
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    font-size: 1rem;
+    color: var(--verde);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .grid-id {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  label { display: block; font-size: 0.8rem; color: var(--cinza-medio); margin-bottom: 4px; font-weight: 500; }
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 8px 11px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px var(--destaque);
+  }
+
+  /* Capítulos */
+  .capitulo {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--borda);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .capitulo-header {
+    background: var(--verde);
+    color: white;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .capitulo-header h3 { font-size: 0.95rem; font-weight: 600; }
+  .capitulo-score {
+    background: rgba(255,255,255,0.18);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .capitulo-body { padding: 6px 0; }
+
+  /* Perguntas */
+  .pergunta {
+    display: grid;
+    grid-template-columns: 1fr 180px 90px;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 18px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .pergunta:last-child { border-bottom: none; }
+  .pergunta.critico { background: #FFF8E1; }
+  .pergunta .codigo {
+    font-weight: 700;
+    color: var(--verde);
+    font-size: 0.82rem;
+    margin-right: 6px;
+  }
+  .pergunta .texto { font-size: 0.88rem; }
+  .badge-critico {
+    display: inline-block;
+    background: var(--laranja);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  select.resposta {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    border-radius: 5px;
+  }
+  select.resposta.conforme { background: #E8F5E9; border-color: #81C784; }
+  select.resposta.parcial { background: #FFF8E1; border-color: #FFD54F; }
+  select.resposta.nc { background: #FFEBEE; border-color: #E57373; }
+  select.resposta.na { background: #ECEFF1; border-color: #90A4AE; }
+
+  .pontos-display {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--cinza-medio);
+  }
+
+  /* Resumo lateral / sticky */
+  .resumo-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 2px solid var(--verde);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 90;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  }
+  .resumo-bar .metricas {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .resumo-bar .metrica { text-align: center; }
+  .resumo-bar .metrica .valor { font-size: 1.3rem; font-weight: 700; color: var(--verde); }
+  .resumo-bar .metrica .label { font-size: 0.72rem; color: var(--cinza-medio); text-transform: uppercase; }
+  .selo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: white;
+  }
+  .selo-diamante { background: linear-gradient(135deg, #1565C0, #42A5F5); }
+  .selo-ouro { background: linear-gradient(135deg, #F9A825, #FFD54F); color: #333; }
+  .selo-prata { background: linear-gradient(135deg, #546E7A, #90A4AE); }
+  .selo-bronze { background: linear-gradient(135deg, #8D6E63, #BCAAA4); }
+  .selo-compromisso { background: linear-gradient(135deg, #C62828, #EF5350); }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-primary {
+    background: var(--verde);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--verde-hover); transform: translateY(-1px); }
+  .btn-secondary {
+    background: #ECEFF1;
+    color: var(--cinza);
+  }
+  .btn-secondary:hover { background: #CFD8DC; }
+
+  /* Observações NC */
+  .obs-nc {
+    margin-top: 6px;
+    width: 100%;
+    font-size: 0.82rem;
+    padding: 6px 8px;
+    border: 1px dashed #FFCDD2;
+    border-radius: 4px;
+    background: #FFF5F5;
+    display: none;
+  }
+  .pergunta.has-nc .obs-nc { display: block; grid-column: 1 / -1; }
+
+  /* ========== RELATÓRIO PDF (print) ========== */
+  @media print {
+    body { background: white; font-size: 11px; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    .resumo-bar { display: none !important; }
+    header.app-header { display: none !important; }
+
+    .relatorio {
+      max-width: 100%;
+      padding: 0;
+    }
+    .relatorio-header {
+      border-bottom: 3px solid var(--verde);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .relatorio-header h1 { font-size: 16pt; color: var(--verde); }
+    .relatorio-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+      font-size: 10pt;
+    }
+    .relatorio-meta div { padding: 4px 0; }
+    .relatorio-meta strong { color: var(--cinza-medio); }
+
+    .resultado-box {
+      background: var(--cinza-claro);
+      border: 2px solid var(--verde);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      margin: 16px 0;
+    }
+    .resultado-box .percentual { font-size: 28pt; font-weight: 800; color: var(--verde); }
+    .resultado-box .selo { font-size: 14pt; margin-top: 4px; }
+
+    table.relatorio-tabela {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      font-size: 9pt;
+    }
+    table.relatorio-tabela th {
+      background: var(--verde);
+      color: white;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    table.relatorio-tabela td {
+      border: 1px solid #DDD;
+      padding: 5px 8px;
+    }
+    table.relatorio-tabela tr:nth-child(even) { background: #FAFAFA; }
+    .nc-list { margin: 10px 0; }
+    .nc-item {
+      border-left: 3px solid var(--vermelho);
+      padding: 6px 10px;
+      margin-bottom: 6px;
+      background: #FFF8F8;
+    }
+    .page-break { page-break-before: always; }
+    .assinaturas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .assinatura-linha {
+      border-top: 1px solid #333;
+      padding-top: 6px;
+      text-align: center;
+      font-size: 9pt;
+    }
+  }
+
+  /* Estilos do relatório na tela (preview) */
+  .relatorio {
+    display: none;
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .relatorio.ativo { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ==================== ÁREA DE PREENCHIMENTO ==================== -->
+<div class="no-print">
+  <header class="app-header">
+    <div>
+      <h1>PGI Carmak — Checklist de Auditoria</h1>
+      <div class="subtitle">Programa de Gestão Integrada · Preencha e gere o relatório</div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-secondary" onclick="limparTudo()">Limpar</button>
+      <button class="btn btn-primary" onclick="gerarRelatorio()">📄 Gerar Relatório PDF</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Identificação -->
+    <div class="card">
+      <h2>📋 Identificação da Auditoria</h2>
+      <div class="grid-id">
+        <div>
+          <label>Filial</label>
+          <input type="text" id="filial" placeholder="Ex: Filial São Paulo">
+        </div>
+        <div>
+          <label>Data da Auditoria</label>
+          <input type="date" id="data">
+        </div>
+        <div>
+          <label>Auditor</label>
+          <input type="text" id="auditor" placeholder="Nome do auditor">
+        </div>
+        <div>
+          <label>Gestor da Filial</label>
+          <input type="text" id="gestor" placeholder="Nome do gestor">
+        </div>
+      </div>
+    </div>
+
+    <!-- Capítulos serão injetados via JS -->
+    <div id="capitulos"></div>
+
+    <!-- Observações gerais -->
+    <div class="card">
+      <h2>📝 Observações Gerais do Auditor</h2>
+      <textarea id="obs-gerais" rows="4" placeholder="Comentários gerais, pontos de atenção, destaques positivos..."></textarea>
+    </div>
+  </div>
+
+  <!-- Barra de resumo fixa -->
+  <div class="resumo-bar">
+    <div class="metricas">
+      <div class="metrica">
+        <div class="valor" id="pontos-obtidos">0</div>
+        <div class="label">Pontos Obtidos</div>
+      </div>
+      <div class="metrica">
+        <div class="valor" id="pontos-possiveis">0</div>
+        <div class="label">Pontos Possíveis</div>
+      </div>
+      <div class="metrica">
+        <div class="valor" id="percentual">0%</div>
+        <div class="label">Percentual</div>
+      </div>
+      <div class="metrica">
+        <div class="valor" id="nc-criticas">0</div>
+        <div class="label">NC Críticas</div>
+      </div>
+    </div>
+    <div>
+      <span class="selo-badge selo-compromisso" id="selo-atual">Selo de Compromisso</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RELATÓRIO (impressão) ==================== -->
+<div class="print-only relatorio" id="relatorio">
+  <!-- Preenchido via JS no momento da geração -->
+</div>
+
+<script>
+// ===================== DADOS DO CHECKLIST =====================
+const CAPITULOS = [
+  {
+    id: 'c1',
+    nome: '1. Pessoas e Organização',
+    perguntas: [
+      { cod: '1.1', texto: 'Existe organograma atualizado da filial?', critico: false },
+      { cod: '1.2', texto: 'As descrições de cargo estão definidas e atualizadas?', critico: false },
+      { cod: '1.3', texto: 'Os técnicos utilizam uniforme corporativo padronizado?', critico: false },
+    ]
+  },
+  {
+    id: 'c2',
+    nome: '2. Treinamento',
+    perguntas: [
+      { cod: '2.1', texto: 'Existe mapa de habilidades dos técnicos?', critico: false },
+      { cod: '2.2', texto: 'Os treinamentos são planejados conforme as necessidades identificadas?', critico: false },
+    ]
+  },
+  {
+    id: 'c3',
+    nome: '3. Meio Ambiente',
+    perguntas: [
+      { cod: '3.1', texto: 'Existe política ambiental para segregação de resíduos sólidos? (MTR, LO, DMR, demais documentos)', critico: true },
+      { cod: '3.2', texto: 'Existe licença de operação válida?', critico: true },
+      { cod: '3.3', texto: 'Existe procedimento documentado para descarte de resíduos?', critico: true },
+      { cod: '3.4', texto: 'Há material absorvente disponível e controlado? (Mantas Absorventes ou Serragem e Kit de Mitigação)', critico: true },
+      { cod: '3.5', texto: 'Existe canaletas responsáveis pela contenção de resíduos perigosos? (Ex.: Óleo → caixa separadora)', critico: false },
+      { cod: '3.6', texto: 'Há uma área designada para descarte de resíduos? Ela está conforme?', critico: true },
+      { cod: '3.7', texto: 'Incidentes ambientais são registrados e tratados? (Ex.: Relatório ambiental)', critico: false },
+    ]
+  },
+  {
+    id: 'c4',
+    nome: '4. Segurança',
+    perguntas: [
+      { cod: '4.1', texto: 'Existe política de segurança e responsável definido?', critico: false },
+      { cod: '4.2', texto: 'Está sendo aplicado DSS (Diálogo Semanal de Segurança)?', critico: true },
+      { cod: '4.3', texto: 'EPIs e EPCs estão disponíveis e organizados?', critico: true },
+      { cod: '4.4', texto: 'As qualificações obrigatórias dos colaboradores estão controladas? (Ex.: NRs)', critico: true },
+      { cod: '4.5', texto: 'Existe check-list de pré-operação para equipamentos aplicáveis?', critico: false },
+      { cod: '4.6', texto: 'Equipamentos possuem inspeções periódicas válidas?', critico: false },
+      { cod: '4.7', texto: 'O kit de primeiros socorros está adequado?', critico: true },
+      { cod: '4.8', texto: 'Os extintores estão identificados e dentro da validade?', critico: true },
+      { cod: '4.9', texto: 'Existe PAE (Plano de Atendimento a Emergências), aprovado e publicado?', critico: true },
+      { cod: '4.10', texto: 'Existe PPCI (Alvará de Proteção Contra Incêndio), válido?', critico: true },
+      { cod: '4.11', texto: 'Acidentes são registrados e possuem análise de causa e ações?', critico: false },
+    ]
+  },
+  {
+    id: 'c5',
+    nome: '5. Oficina',
+    perguntas: [
+      { cod: '5.1', texto: 'O piso da oficina está limpo e sem rachaduras excessivas?', critico: false },
+      { cod: '5.2', texto: 'Os boxes de serviço estão demarcados?', critico: false },
+      { cod: '5.3', texto: 'A ventilação da oficina é adequada?', critico: false },
+      { cod: '5.4', texto: 'A iluminação da oficina é adequada?', critico: false },
+      { cod: '5.5', texto: 'Ferramentas básicas estão disponíveis e organizadas?', critico: false },
+      { cod: '5.6', texto: 'Ferramentas compartilhadas possuem controle de utilização?', critico: false },
+      { cod: '5.7', texto: 'Materiais consumíveis estão organizados e identificados?', critico: false },
+      { cod: '5.8', texto: 'Existem carrinhos para movimentação de cargas?', critico: false },
+      { cod: '5.9', texto: 'A ordem de serviço contém todas as informações necessárias? (Via Tractian)', critico: true },
+      { cod: '5.10', texto: 'Existem FISPQ / FDS (Ficha de Segurança)?', critico: true },
+      { cod: '5.11', texto: 'Existe cronograma para os técnicos da oficina?', critico: false },
+      { cod: '5.12', texto: 'Manuais técnicos estão disponíveis e acessíveis?', critico: false },
+    ]
+  },
+  {
+    id: 'c6',
+    nome: '6. Van de Serviço',
+    perguntas: [
+      { cod: '6.1', texto: 'A van possui identificação visual adequada?', critico: true },
+      { cod: '6.2', texto: 'A condição interna e externa da van é adequada?', critico: true },
+      { cod: '6.3', texto: 'Ferramentas e peças possuem local definido e identificado?', critico: true },
+    ]
+  },
+];
+
+// ===================== RENDERIZAÇÃO =====================
+function renderCapitulos() {
+  const container = document.getElementById('capitulos');
+  container.innerHTML = '';
+
+  CAPITULOS.forEach(cap => {
+    const div = document.createElement('div');
+    div.className = 'capitulo';
+    div.id = cap.id;
+
+    let perguntasHTML = '';
+    cap.perguntas.forEach(p => {
+      const critClass = p.critico ? 'critico' : '';
+      const badge = p.critico ? '<span class="badge-critico">CRÍTICO</span>' : '';
+      perguntasHTML += `
+        <div class="pergunta ${critClass}" data-cod="${p.cod}" data-critico="${p.critico}">
+          <div class="texto">
+            <span class="codigo">${p.cod}</span>
+            ${p.texto}${badge}
+          </div>
+          <div>
+            <select class="resposta" data-cod="${p.cod}" onchange="atualizarResposta(this)">
+              <option value="">— Selecione —</option>
+              <option value="C">Conforme (10)</option>
+              <option value="P">Parcial (5)</option>
+              <option value="NC">Não Conforme (0)</option>
+              <option value="NA">N/A</option>
+            </select>
+          </div>
+          <div class="pontos-display" id="pts-${p.cod}">—</div>
+          <textarea class="obs-nc" id="obs-${p.cod}" placeholder="Descreva a não conformidade / observação..." rows="2"></textarea>
+        </div>
+      `;
+    });
+
+    div.innerHTML = `
+      <div class="capitulo-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'block'">
+        <h3>${cap.nome}</h3>
+        <span class="capitulo-score" id="score-${cap.id}">0 / 0</span>
+      </div>
+      <div class="capitulo-body">
+        ${perguntasHTML}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ===================== CÁLCULO =====================
+function pontosDaResposta(val) {
+  if (val === 'C') return 10;
+  if (val === 'P') return 5;
+  if (val === 'NC') return 0;
+  return null; // NA ou vazio
+}
+
+function atualizarResposta(select) {
+  const cod = select.dataset.cod;
+  const val = select.value;
+  const ptsEl = document.getElementById('pts-' + cod);
+  const perguntaEl = select.closest('.pergunta');
+
+  // Cor do select
+  select.classList.remove('conforme', 'parcial', 'nc', 'na');
+  if (val === 'C') select.classList.add('conforme');
+  else if (val === 'P') select.classList.add('parcial');
+  else if (val === 'NC') select.classList.add('nc');
+  else if (val === 'NA') select.classList.add('na');
+
+  // Mostrar campo de observação se NC ou Parcial
+  if (val === 'NC' || val === 'P') {
+    perguntaEl.classList.add('has-nc');
+  } else {
+    perguntaEl.classList.remove('has-nc');
+  }
+
+  const pts = pontosDaResposta(val);
+  ptsEl.textContent = pts !== null ? pts : (val === 'NA' ? 'N/A' : '—');
+
+  recalcularTudo();
+}
+
+function recalcularTudo() {
+  let totalObtidos = 0;
+  let totalPossiveis = 0;
+  let ncCriticas = 0;
+  let temLOVencida = false;
+  let temPPCIVencido = false;
+  let temPAEAusente = false;
+
+  CAPITULOS.forEach(cap => {
+    let capObt = 0;
+    let capPos = 0;
+
+    cap.perguntas.forEach(p => {
+      const select = document.querySelector(`select.resposta[data-cod="${p.cod}"]`);
+      const val = select ? select.value : '';
+      const pts = pontosDaResposta(val);
+
+      if (pts !== null) {
+        capObt += pts;
+        capPos += 10;
+        totalObtidos += pts;
+        totalPossiveis += 10;
+
+        if (val === 'NC' && p.critico) {
+          ncCriticas++;
+          // Gatilhos específicos
+          if (p.cod === '3.2') temLOVencida = true;
+          if (p.cod === '4.10') temPPCIVencido = true;
+          if (p.cod === '4.9') temPAEAusente = true;
+        }
+      }
+    });
+
+    const scoreEl = document.getElementById('score-' + cap.id);
+    if (scoreEl) scoreEl.textContent = `${capObt} / ${capPos}`;
+  });
+
+  const percentual = totalPossiveis > 0 ? (totalObtidos / totalPossiveis) * 100 : 0;
+
+  document.getElementById('pontos-obtidos').textContent = totalObtidos;
+  document.getElementById('pontos-possiveis').textContent = totalPossiveis;
+  document.getElementById('percentual').textContent = percentual.toFixed(1) + '%';
+  document.getElementById('nc-criticas').textContent = ncCriticas;
+
+  // Classificação com regras de desclassificação
+  const classificacao = classificar(percentual, ncCriticas, temLOVencida, temPPCIVencido, temPAEAusente);
+  const seloEl = document.getElementById('selo-atual');
+  seloEl.textContent = classificacao.nome;
+  seloEl.className = 'selo-badge ' + classificacao.classe;
+
+  return {
+    totalObtidos,
+    totalPossiveis,
+    percentual,
+    ncCriticas,
+    classificacao,
+    temLOVencida,
+    temPPCIVencido,
+    temPAEAusente
+  };
+}
+
+function classificar(percentual, ncCriticas, temLO, temPPCI, temPAE) {
+  // Compromisso Automático
+  if (temLO || temPPCI || temPAE) {
+    return { nome: 'Selo de Compromisso', classe: 'selo-compromisso', motivo: 'Gatilho automático (LO/PPCI/PAE)' };
+  }
+
+  if (percentual >= 100 && ncCriticas === 0) {
+    return { nome: 'Selo Diamante', classe: 'selo-diamante', motivo: '' };
+  }
+  if (percentual >= 90) {
+    if (ncCriticas > 1) {
+      return { nome: 'Selo Prata', classe: 'selo-prata', motivo: 'Limitado por >1 NC crítica' };
+    }
+    return { nome: 'Selo Ouro', classe: 'selo-ouro', motivo: '' };
+  }
+  if (percentual >= 80) {
+    if (ncCriticas > 3) {
+      return { nome: 'Selo Bronze', classe: 'selo-bronze', motivo: 'Limitado por >3 NC críticas' };
+    }
+    return { nome: 'Selo Prata', classe: 'selo-prata', motivo: '' };
+  }
+  if (percentual >= 75) {
+    return { nome: 'Selo Bronze', classe: 'selo-bronze', motivo: '' };
+  }
+  return { nome: 'Selo de Compromisso', classe: 'selo-compromisso', motivo: 'Percentual abaixo de 75%' };
+}
+
+// ===================== GERAR RELATÓRIO =====================
+function gerarRelatorio() {
+  const dados = recalcularTudo();
+  const filial = document.getElementById('filial').value || '—';
+  const data = document.getElementById('data').value || '—';
+  const auditor = document.getElementById('auditor').value || '—';
+  const gestor = document.getElementById('gestor').value || '—';
+  const obsGerais = document.getElementById('obs-gerais').value || '';
+
+  // Coletar resultados por capítulo e NCs
+  let tabelasCapitulos = '';
+  let listaNCs = '';
+  let temNC = false;
+
+  CAPITULOS.forEach(cap => {
+    let rows = '';
+    let capObt = 0, capPos = 0;
+
+    cap.perguntas.forEach(p => {
+      const select = document.querySelector(`select.resposta[data-cod="${p.cod}"]`);
+      const val = select ? select.value : '';
+      const pts = pontosDaResposta(val);
+      const obs = document.getElementById('obs-' + p.cod)?.value || '';
+
+      let label = '—';
+      if (val === 'C') label = 'Conforme';
+      else if (val === 'P') label = 'Parcial';
+      else if (val === 'NC') label = 'Não Conforme';
+      else if (val === 'NA') label = 'N/A';
+
+      const ptsTxt = pts !== null ? pts : (val === 'NA' ? 'N/A' : '—');
+      const critMark = p.critico ? ' *' : '';
+
+      rows += `<tr>
+        <td>${p.cod}${critMark}</td>
+        <td>${p.texto}</td>
+        <td>${label}</td>
+        <td style="text-align:center">${ptsTxt}</td>
+      </tr>`;
+
+      if (pts !== null) {
+        capObt += pts;
+        capPos += 10;
+      }
+
+      if (val === 'NC' || val === 'P') {
+        temNC = true;
+        listaNCs += `
+          <div class="nc-item">
+            <strong>${p.cod}${p.critico ? ' (CRÍTICO)' : ''} — ${label}</strong><br>
+            ${p.texto}<br>
+            ${obs ? '<em>Observação: ' + obs + '</em>' : '<em>Sem observação registrada</em>'}
+          </div>`;
+      }
+    });
+
+    tabelasCapitulos += `
+      <h3 style="color:#003938; margin:16px 0 6px; font-size:11pt;">${cap.nome} &nbsp; <span style="font-weight:400; color:#666;">(${capObt} / ${capPos} pts)</span></h3>
+      <table class="relatorio-tabela">
+        <thead>
+          <tr>
+            <th style="width:50px">Cód.</th>
+            <th>Requisito</th>
+            <th style="width:100px">Resultado</th>
+            <th style="width:60px">Pontos</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  });
+
+  const motivoExtra = dados.classificacao.motivo
+    ? `<p style="font-size:9pt; color:#C62828; margin-top:4px;"><strong>Observação de classificação:</strong> ${dados.classificacao.motivo}</p>`
+    : '';
+
+  const html = `
+    <div class="relatorio-header">
+      <h1>Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1>
+      <p style="color:#666; font-size:10pt;">Carmak · Sistema de Avaliação de Filiais</p>
+    </div>
+
+    <div class="relatorio-meta">
+      <div><strong>Filial:</strong> ${filial}</div>
+      <div><strong>Data:</strong> ${data}</div>
+      <div><strong>Auditor:</strong> ${auditor}</div>
+      <div><strong>Gestor da Filial:</strong> ${gestor}</div>
+      <div><strong>Pontos Obtidos:</strong> ${dados.totalObtidos}</div>
+      <div><strong>Pontos Possíveis:</strong> ${dados.totalPossiveis}</div>
+    </div>
+
+    <div class="resultado-box">
+      <div class="percentual">${dados.percentual.toFixed(1)}%</div>
+      <div class="selo">${dados.classificacao.nome}</div>
+      ${motivoExtra}
+      <p style="font-size:9pt; color:#666; margin-top:6px;">NC Críticas: ${dados.ncCriticas}</p>
+    </div>
+
+    <h2 style="font-size:12pt; color:#003938; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Resultado por Capítulo</h2>
+    ${tabelasCapitulos}
+
+    <div class="page-break"></div>
+
+    <h2 style="font-size:12pt; color:#C62828; border-bottom:1px solid #CCC; padding-bottom:4px;">Não Conformidades e Parciais</h2>
+    <div class="nc-list">
+      ${temNC ? listaNCs : '<p style="color:#666;">Nenhuma não conformidade ou parcial registrada.</p>'}
+    </div>
+
+    ${obsGerais ? `
+      <h2 style="font-size:12pt; color:#003938; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Observações Gerais do Auditor</h2>
+      <p style="font-size:10pt; white-space:pre-wrap;">${obsGerais}</p>
+    ` : ''}
+
+    <div class="assinaturas">
+      <div class="assinatura-linha">
+        Auditor<br>
+        ${auditor}
+      </div>
+      <div class="assinatura-linha">
+        Gestor da Filial<br>
+        ${gestor}
+      </div>
+    </div>
+
+    <p style="margin-top:30px; font-size:8pt; color:#999; text-align:center;">
+      Documento gerado pelo Checklist PGI Carmak · Itens marcados com * são críticos · 
+      Regras de desclassificação aplicadas conforme Lista Oficial de Itens Críticos
+    </p>
+  `;
+
+  const relatorioEl = document.getElementById('relatorio');
+  relatorioEl.innerHTML = html;
+  relatorioEl.classList.add('ativo');
+
+  // Dispara impressão (o usuário escolhe "Salvar como PDF")
+  setTimeout(() => {
+    window.print();
+  }, 200);
+}
+
+function limparTudo() {
+  if (!confirm('Deseja limpar todas as respostas?')) return;
+  document.querySelectorAll('select.resposta').forEach(s => {
+    s.value = '';
+    s.classList.remove('conforme', 'parcial', 'nc', 'na');
+  });
+  document.querySelectorAll('.obs-nc').forEach(t => t.value = '');
+  document.querySelectorAll('.pergunta').forEach(p => p.classList.remove('has-nc'));
+  document.getElementById('filial').value = '';
+  document.getElementById('data').value = '';
+  document.getElementById('auditor').value = '';
+  document.getElementById('gestor').value = '';
+  document.getElementById('obs-gerais').value = '';
+  recalcularTudo();
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+  renderCapitulos();
+  // Data de hoje por padrão
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = hoje;
+  recalcularTudo();
+});
+</script>
+</body>
+</html>
