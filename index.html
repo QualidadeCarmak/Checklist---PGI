@@ -189,6 +189,67 @@
   }
   .pergunta.has-nc .obs-nc { display: block; grid-column: 1 / -1; }
 
+  .anexos-area {
+    display: none;
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: #F7FAFA;
+    border: 1px dashed #90A4AE;
+    border-radius: 6px;
+  }
+  .pergunta.has-anexo .anexos-area { display: block; }
+  .anexos-area .anexos-label {
+    font-size: 0.78rem;
+    color: var(--cinza-medio);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .anexos-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .anexo-thumb {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--borda);
+    background: #EEE;
+  }
+  .anexo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .anexo-thumb .btn-rem {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(198,40,40,0.9);
+    color: white;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+  }
+  .anexos-area input[type="file"] {
+    font-size: 0.8rem;
+    max-width: 100%;
+  }
+  .anexos-hint {
+    font-size: 0.72rem;
+    color: #90A4AE;
+    margin-top: 4px;
+  }
+
   .acoes-card {
     display: flex;
     justify-content: flex-end;
@@ -564,6 +625,11 @@ const CAPITULOS = [
 
 const STORAGE_KEY = 'pgi_carmak_historico';
 let relatorioAtualHTML = '';
+/** @type {Object.<string, Array<{id:string, dataUrl:string, nome:string}>>} */
+const imagensPorPergunta = {};
+const MAX_IMAGENS_POR_ITEM = 5;
+const MAX_LARGURA_IMG = 1200;
+const JPEG_QUALITY = 0.72;
 
 function mostrarAba(aba) {
   document.getElementById('aba-checklist').classList.toggle('oculto', aba !== 'checklist');
@@ -596,6 +662,12 @@ function renderCapitulos() {
           </div>
           <div class="pontos-display" id="pts-${p.cod}">—</div>
           <textarea class="obs-nc" id="obs-${p.cod}" placeholder="Descreva a não conformidade / observação..." rows="2"></textarea>
+          <div class="anexos-area" id="anexos-${p.cod}">
+            <div class="anexos-label">Anexar evidências (imagens)</div>
+            <div class="anexos-thumbs" id="thumbs-${p.cod}"></div>
+            <input type="file" accept="image/*" multiple data-cod="${p.cod}" onchange="adicionarImagens(this)">
+            <div class="anexos-hint">Máx. 5 imagens por item · comprimidas automaticamente para o relatório</div>
+          </div>
         </div>`;
     });
     const div = document.createElement('div');
@@ -628,11 +700,93 @@ function atualizarResposta(select) {
   else if (val === 'P') select.classList.add('parcial');
   else if (val === 'NC') select.classList.add('nc');
   else if (val === 'NA') select.classList.add('na');
+
+  // Observação: NC ou Parcial
   if (val === 'NC' || val === 'P') perguntaEl.classList.add('has-nc');
   else perguntaEl.classList.remove('has-nc');
+
+  // Anexos: qualquer resposta que não seja vazio nem N/A
+  if (val === 'C' || val === 'P' || val === 'NC') {
+    perguntaEl.classList.add('has-anexo');
+  } else {
+    perguntaEl.classList.remove('has-anexo');
+  }
+
   const pts = pontosDaResposta(val);
   ptsEl.textContent = pts !== null ? pts : (val === 'NA' ? 'N/A' : '—');
   recalcularTudo();
+}
+
+function comprimirImagem(file) {
+  return new Promise(function(resolve, reject) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        let w = img.width, h = img.height;
+        if (w > MAX_LARGURA_IMG) {
+          h = Math.round(h * (MAX_LARGURA_IMG / w));
+          w = MAX_LARGURA_IMG;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', JPEG_QUALITY));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderThumbs(cod) {
+  const box = document.getElementById('thumbs-' + cod);
+  if (!box) return;
+  const lista = imagensPorPergunta[cod] || [];
+  box.innerHTML = lista.map(function(img, idx) {
+    return '<div class="anexo-thumb">' +
+      '<img src="' + img.dataUrl + '" alt="' + (img.nome || '') + '">' +
+      '<button type="button" class="btn-rem" title="Remover" onclick="removerImagem(\'' + cod + '\',' + idx + ')">&times;</button>' +
+      '</div>';
+  }).join('');
+}
+
+function adicionarImagens(input) {
+  const cod = input.dataset.cod;
+  if (!imagensPorPergunta[cod]) imagensPorPergunta[cod] = [];
+  const atuais = imagensPorPergunta[cod];
+  const files = Array.from(input.files || []);
+  const restantes = MAX_IMAGENS_POR_ITEM - atuais.length;
+  if (restantes <= 0) {
+    mostrarToast('Máximo de ' + MAX_IMAGENS_POR_ITEM + ' imagens por item.');
+    input.value = '';
+    return;
+  }
+  const selecionados = files.slice(0, restantes);
+  Promise.all(selecionados.map(function(f) {
+    return comprimirImagem(f).then(function(dataUrl) {
+      return { id: Date.now() + '_' + Math.random().toString(36).slice(2, 7), dataUrl: dataUrl, nome: f.name };
+    });
+  })).then(function(novas) {
+    imagensPorPergunta[cod] = atuais.concat(novas);
+    renderThumbs(cod);
+    if (files.length > restantes) {
+      mostrarToast('Apenas ' + restantes + ' imagem(ns) adicionada(s) (limite por item).');
+    }
+  }).catch(function() {
+    mostrarToast('Erro ao processar uma ou mais imagens.');
+  });
+  input.value = '';
+}
+
+function removerImagem(cod, idx) {
+  if (!imagensPorPergunta[cod]) return;
+  imagensPorPergunta[cod].splice(idx, 1);
+  renderThumbs(cod);
 }
 
 function recalcularTudo() {
@@ -699,17 +853,33 @@ function coletarRespostas() {
         valor: select ? select.value : '',
         obs: obs ? obs.value : '',
         critico: p.critico,
-        texto: p.texto
+        texto: p.texto,
+        imagens: (imagensPorPergunta[p.cod] || []).map(function(i) {
+          return { dataUrl: i.dataUrl, nome: i.nome };
+        })
       };
     });
   });
   return respostas;
 }
 
+function htmlImagensItem(imagens) {
+  if (!imagens || !imagens.length) return '';
+  var html = '<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">';
+  imagens.forEach(function(img) {
+    html += '<img src="' + img.dataUrl + '" alt="' + (img.nome || 'evidência') + '" style="max-width:180px; max-height:140px; object-fit:contain; border:1px solid #CCC; border-radius:4px;">';
+  });
+  html += '</div>';
+  return html;
+}
+
 function montarHTMLRelatorio(dados, meta, respostas) {
   let tabelasCapitulos = '';
   let listaNCs = '';
+  let listaEvidencias = '';
   let temNC = false;
+  let temEvidencia = false;
+
   CAPITULOS.forEach(cap => {
     let rows = '';
     let capObt = 0, capPos = 0;
@@ -724,18 +894,30 @@ function montarHTMLRelatorio(dados, meta, respostas) {
       else if (val === 'NA') label = 'N/A';
       const ptsTxt = pts !== null ? pts : (val === 'NA' ? 'N/A' : '—');
       const critMark = p.critico ? ' *' : '';
-      rows += '<tr><td>' + p.cod + critMark + '</td><td>' + p.texto + '</td><td>' + label + '</td><td style="text-align:center">' + ptsTxt + '</td></tr>';
+      const nImg = (r.imagens && r.imagens.length) ? r.imagens.length : 0;
+      const imgHint = nImg > 0 ? ' (' + nImg + ' img)' : '';
+      rows += '<tr><td>' + p.cod + critMark + '</td><td>' + p.texto + '</td><td>' + label + imgHint + '</td><td style="text-align:center">' + ptsTxt + '</td></tr>';
       if (pts !== null) { capObt += pts; capPos += 10; }
       if (val === 'NC' || val === 'P') {
         temNC = true;
-        listaNCs += '<div class="nc-item"><strong>' + p.cod + (p.critico ? ' (CRÍTICO)' : '') + ' — ' + label + '</strong><br>' + p.texto + '<br>' + (r.obs ? '<em>Observação: ' + r.obs + '</em>' : '<em>Sem observação registrada</em>') + '</div>';
+        listaNCs += '<div class="nc-item"><strong>' + p.cod + (p.critico ? ' (CRÍTICO)' : '') + ' — ' + label + '</strong><br>' + p.texto + '<br>' +
+          (r.obs ? '<em>Observação: ' + r.obs + '</em>' : '<em>Sem observação registrada</em>') +
+          htmlImagensItem(r.imagens) + '</div>';
+      }
+      if (nImg > 0) {
+        temEvidencia = true;
+        listaEvidencias += '<div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #EEE;">' +
+          '<strong style="color:#003938;">' + p.cod + '</strong> — ' + p.texto + ' <span style="color:#666;">(' + label + ')</span>' +
+          htmlImagensItem(r.imagens) + '</div>';
       }
     });
-    tabelasCapitulos += '<h3 style="color:#003938; margin:16px 0 6px; font-size:11pt;">' + cap.nome + ' &nbsp; <span style="font-weight:400; color:#666;">(' + capObt + ' / ' + capPos + ' pts)</span></h3><table class="relatorio-tabela"><thead><tr><th style="width:50px">Cód.</th><th>Requisito</th><th style="width:100px">Resultado</th><th style="width:60px">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    tabelasCapitulos += '<h3 style="color:#003938; margin:16px 0 6px; font-size:11pt;">' + cap.nome + ' &nbsp; <span style="font-weight:400; color:#666;">(' + capObt + ' / ' + capPos + ' pts)</span></h3><table class="relatorio-tabela"><thead><tr><th style="width:50px">Cód.</th><th>Requisito</th><th style="width:120px">Resultado</th><th style="width:60px">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
   });
+
   const motivoExtra = dados.classificacao.motivo
     ? '<p style="font-size:9pt; color:#C62828; margin-top:4px;"><strong>Observação de classificação:</strong> ' + dados.classificacao.motivo + '</p>'
     : '';
+
   return '<div class="relatorio-header"><h1 style="color:#003938; font-size:16pt; margin-bottom:4px;">Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1><p style="color:#666; font-size:10pt;">Carmak · Sistema de Avaliação de Filiais</p></div>' +
     '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:12px 0; font-size:10pt;">' +
     '<div><strong>Filial:</strong> ' + meta.filial + '</div><div><strong>Data:</strong> ' + meta.data + '</div><div><strong>Auditor:</strong> ' + meta.auditor + '</div>' +
@@ -748,6 +930,7 @@ function montarHTMLRelatorio(dados, meta, respostas) {
     '<div class="page-break"></div>' +
     '<h2 style="font-size:12pt; color:#C62828; border-bottom:1px solid #CCC; padding-bottom:4px;">Não Conformidades e Parciais</h2>' +
     '<div class="nc-list">' + (temNC ? listaNCs : '<p style="color:#666;">Nenhuma não conformidade ou parcial registrada.</p>') + '</div>' +
+    (temEvidencia ? '<div class="page-break"></div><h2 style="font-size:12pt; color:#003938; border-bottom:1px solid #CCC; padding-bottom:4px;">Evidências fotográficas</h2>' + listaEvidencias : '') +
     (meta.obsGerais ? '<h2 style="font-size:12pt; color:#003938; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Observações Gerais do Auditor</h2><p style="font-size:10pt; white-space:pre-wrap;">' + meta.obsGerais + '</p>' : '') +
     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:40px;">' +
     '<div style="border-top:1px solid #333; padding-top:6px; text-align:center; font-size:9pt;">Auditor<br>' + meta.auditor + '</div>' +
@@ -864,13 +1047,17 @@ function mostrarToast(msg) {
 }
 
 function limparTudo() {
-  if (!confirm('Deseja limpar todas as respostas?')) return;
+  if (!confirm('Deseja limpar todas as respostas e anexos?')) return;
   document.querySelectorAll('select.resposta').forEach(function(s) {
     s.value = '';
     s.classList.remove('conforme', 'parcial', 'nc', 'na');
   });
   document.querySelectorAll('.obs-nc').forEach(function(t) { t.value = ''; });
-  document.querySelectorAll('.pergunta').forEach(function(p) { p.classList.remove('has-nc'); });
+  document.querySelectorAll('.pergunta').forEach(function(p) {
+    p.classList.remove('has-nc', 'has-anexo');
+  });
+  Object.keys(imagensPorPergunta).forEach(function(k) { delete imagensPorPergunta[k]; });
+  document.querySelectorAll('.anexos-thumbs').forEach(function(el) { el.innerHTML = ''; });
   document.getElementById('filial').value = '';
   document.getElementById('data').value = new Date().toISOString().split('T')[0];
   document.getElementById('auditor').value = '';
