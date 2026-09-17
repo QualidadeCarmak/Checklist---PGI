@@ -259,18 +259,85 @@ select.resposta.na{ background:var(--off-bg,#EBEDF0); border-color:#B0B8C0; colo
   padding-top:14px; border-top:1px solid var(--line);
 }
 
+
+/* Relatório — visual Safira & Ouro (tela + modal) */
+.rel-header{ display:flex; align-items:flex-start; gap:18px; margin-bottom:14px; padding-bottom:12px; border-bottom:3px solid #C9A227; }
+.rel-selo{ width:96px; height:96px; object-fit:contain; flex-shrink:0; }
+.rel-header-text{ flex:1; }
+.rel-header-text h1{ color:#0A2F5C; font-size:1.15rem; margin:0 0 2px; font-family:'Space Grotesk',Inter,sans-serif; }
+.rel-header-text .sub{ color:#C9A227; font-size:0.78rem; font-weight:700; letter-spacing:.3px; margin:0 0 10px; }
+.rel-meta{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px 14px; font-size:0.82rem; }
+.rel-meta strong{ color:#0A2F5C; }
+.rel-score-box{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  background:linear-gradient(135deg,#0A2F5C 0%,#0E4D8C 100%);
+  color:#fff; border-radius:12px; padding:16px 22px; margin:14px 0 18px;
+  box-shadow:0 6px 18px rgba(10,47,92,0.18);
+}
+.rel-score-box .pct{ font-size:2rem; font-weight:800; line-height:1; color:#E8C547; font-family:'Space Grotesk',sans-serif; }
+.rel-score-box .selo-nome{ font-size:1.15rem; font-weight:700; }
+.rel-score-box .meta-score{ font-size:0.75rem; opacity:.9; margin-top:2px; }
+.rel-cap-title{
+  background:#0A2F5C; color:#fff; padding:8px 14px; border-radius:8px 8px 0 0;
+  font-size:0.88rem; font-weight:700; margin:16px 0 0; display:flex; justify-content:space-between; align-items:center;
+}
+.rel-cap-title .cap-meta{ font-weight:500; font-size:0.78rem; color:#E8C547; }
+table.relatorio-tabela{ width:100%; border-collapse:collapse; margin:0 0 10px; font-size:0.8rem; border:1px solid #D0DCEB; }
+table.relatorio-tabela th{ background:#EEF4FB; color:#0A2F5C; padding:6px 10px; text-align:left; border-bottom:2px solid #C9A227; font-size:0.72rem; text-transform:uppercase; letter-spacing:.3px; }
+table.relatorio-tabela td{ border:1px solid #E8EEF5; padding:5px 10px; }
+table.relatorio-tabela tr:nth-child(even){ background:#F8FAFC; }
+.badge-c{ color:#1E7F72; font-weight:700; }
+.badge-p{ color:#8A6B00; font-weight:700; }
+.badge-nc{ color:#C6483E; font-weight:700; }
+.badge-na{ color:#5A7088; }
+.nc-item{ border-left:3px solid #C6483E; padding:8px 12px; margin-bottom:8px; background:#FFF8F8; border-radius:0 8px 8px 0; font-size:0.82rem; }
+.rel-section-title{ font-size:1rem; color:#0A2F5C; border-bottom:2px solid #C9A227; padding-bottom:4px; margin:20px 0 10px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+.rel-section-title.nc{ color:#C6483E; border-color:#C6483E; }
+.rel-assinaturas{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:36px; }
+.rel-assinaturas .linha{ border-top:1px solid #0A2F5C; padding-top:6px; text-align:center; font-size:0.82rem; }
+.rel-footer{ margin-top:24px; font-size:0.7rem; color:#8A9BB0; text-align:center; border-top:1px solid #D0DCEB; padding-top:8px; }
+
 @media print{
-  body{ background:#fff; font-size:11px; }
+  body{ background:#fff; font-size:11px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .no-print{ display:none !important; }
   .print-only{ display:block !important; }
   .resumo-bar, .modal-overlay, .toast, .topbar{ display:none !important; }
-  .relatorio-print{ max-width:100%; padding:0; }
-  table.relatorio-tabela{ width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:9pt; }
-  table.relatorio-tabela th{ background:#0A2F5C; color:#fff; padding:6px 8px; text-align:left; }
-  table.relatorio-tabela td{ border:1px solid #DDD; padding:5px 8px; }
-  table.relatorio-tabela tr:nth-child(even){ background:#FAFAFA; }
-  .nc-item{ border-left:3px solid #C6483E; padding:6px 10px; margin-bottom:6px; background:#FFF8F8; }
+  .relatorio-print{ max-width:100%; padding:0; color:#0A1F3A; }
+  .rel-header{ display:flex; align-items:flex-start; gap:18px; margin-bottom:14px; padding-bottom:12px; border-bottom:3px solid #C9A227; }
+  .rel-selo{ width:90px; height:90px; object-fit:contain; flex-shrink:0; }
+  .rel-header-text{ flex:1; }
+  .rel-header-text h1{ color:#0A2F5C; font-size:15pt; margin:0 0 2px; font-family:Inter,Arial,sans-serif; }
+  .rel-header-text .sub{ color:#C9A227; font-size:9pt; font-weight:700; letter-spacing:.3px; margin:0 0 8px; }
+  .rel-meta{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px 16px; font-size:9pt; }
+  .rel-meta strong{ color:#0A2F5C; }
+  .rel-score-box{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    background:linear-gradient(135deg,#0A2F5C 0%,#0E4D8C 100%);
+    color:#fff; border-radius:10px; padding:14px 20px; margin:14px 0 18px;
+  }
+  .rel-score-box .pct{ font-size:28pt; font-weight:800; line-height:1; color:#E8C547; }
+  .rel-score-box .selo-nome{ font-size:14pt; font-weight:700; }
+  .rel-score-box .meta-score{ font-size:8.5pt; opacity:.9; margin-top:2px; }
+  .rel-cap-title{
+    background:#0A2F5C; color:#fff; padding:7px 12px; border-radius:6px 6px 0 0;
+    font-size:10pt; font-weight:700; margin:16px 0 0; display:flex; justify-content:space-between; align-items:center;
+  }
+  .rel-cap-title .cap-meta{ font-weight:400; font-size:9pt; color:#E8C547; }
+  table.relatorio-tabela{ width:100%; border-collapse:collapse; margin:0 0 8px; font-size:8.5pt; border:1px solid #D0DCEB; }
+  table.relatorio-tabela th{ background:#EEF4FB; color:#0A2F5C; padding:5px 8px; text-align:left; border-bottom:2px solid #C9A227; font-size:8pt; text-transform:uppercase; letter-spacing:.3px; }
+  table.relatorio-tabela td{ border:1px solid #E8EEF5; padding:4px 8px; }
+  table.relatorio-tabela tr:nth-child(even){ background:#F8FAFC; }
+  .badge-c{ color:#1E7F72; font-weight:700; }
+  .badge-p{ color:#8A6B00; font-weight:700; }
+  .badge-nc{ color:#C6483E; font-weight:700; }
+  .badge-na{ color:#5A7088; }
+  .nc-item{ border-left:3px solid #C6483E; padding:8px 12px; margin-bottom:8px; background:#FFF8F8; border-radius:0 6px 6px 0; font-size:9pt; }
   .page-break{ page-break-before:always; }
+  .rel-section-title{ font-size:11pt; color:#0A2F5C; border-bottom:2px solid #C9A227; padding-bottom:4px; margin:20px 0 10px; font-weight:700; }
+  .rel-section-title.nc{ color:#C6483E; border-color:#C6483E; }
+  .rel-assinaturas{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:36px; }
+  .rel-assinaturas .linha{ border-top:1px solid #0A2F5C; padding-top:6px; text-align:center; font-size:9pt; }
+  .rel-footer{ margin-top:24px; font-size:7.5pt; color:#8A9BB0; text-align:center; border-top:1px solid #D0DCEB; padding-top:8px; }
 }
 
 </style>
@@ -797,57 +864,89 @@ function montarHTMLRelatorio(dados, meta, respostas) {
       const val = r.valor || '';
       const pts = pontosDaResposta(val);
       let label = '—';
-      if (val === 'C') label = 'Conforme';
-      else if (val === 'P') label = 'Parcial';
-      else if (val === 'NC') label = 'Não Conforme';
-      else if (val === 'NA') label = 'N/A';
+      let labelClass = '';
+      if (val === 'C') { label = 'Conforme'; labelClass = 'badge-c'; }
+      else if (val === 'P') { label = 'Parcial'; labelClass = 'badge-p'; }
+      else if (val === 'NC') { label = 'Não Conforme'; labelClass = 'badge-nc'; }
+      else if (val === 'NA') { label = 'N/A'; labelClass = 'badge-na'; }
       const ptsTxt = pts !== null ? pts : (val === 'NA' ? 'N/A' : '—');
       const critMark = p.critico ? ' *' : '';
       const nImg = (r.imagens && r.imagens.length) ? r.imagens.length : 0;
-      const imgHint = nImg > 0 ? ' (' + nImg + ' img)' : '';
-      rows += '<tr><td>' + p.cod + critMark + '</td><td>' + p.texto + '</td><td>' + label + imgHint + '</td><td style="text-align:center">' + ptsTxt + '</td></tr>';
+      const imgHint = nImg > 0 ? ' <span style="color:#5A7088;font-size:8pt;">(' + nImg + ' img)</span>' : '';
+      rows += '<tr><td style="width:48px;font-weight:700;color:#0A2F5C;">' + p.cod + critMark + '</td><td>' + p.texto + '</td><td class="' + labelClass + '" style="width:110px;">' + label + imgHint + '</td><td style="text-align:center;width:52px;font-weight:600;">' + ptsTxt + '</td></tr>';
       if (pts !== null) { capObt += pts; capPos += 10; }
       if (val === 'NC' || val === 'P') {
         temNC = true;
-        listaNCs += '<div class="nc-item"><strong>' + p.cod + (p.critico ? ' (CRÍTICO)' : '') + ' — ' + label + '</strong><br>' + p.texto + '<br>' +
-          (r.obs ? '<em>Observação: ' + r.obs + '</em>' : '<em>Sem observação registrada</em>') +
+        listaNCs += '<div class="nc-item"><strong style="color:#0A2F5C;">' + p.cod + (p.critico ? ' <span style="color:#C6483E;">(CRÍTICO)</span>' : '') + ' — ' + label + '</strong><br>' + p.texto + '<br>' +
+          (r.obs ? '<em style="color:#5A7088;">Observação: ' + r.obs + '</em>' : '<em style="color:#8A9BB0;">Sem observação registrada</em>') +
           htmlImagensItem(r.imagens) + '</div>';
       }
       if (nImg > 0) {
         temEvidencia = true;
-        listaEvidencias += '<div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #EEE;">' +
-          '<strong style="color:#0A2F5C;">' + p.cod + '</strong> — ' + p.texto + ' <span style="color:#666;">(' + label + ')</span>' +
+        listaEvidencias += '<div style="margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #E8EEF5;">' +
+          '<strong style="color:#0A2F5C;">' + p.cod + '</strong> — ' + p.texto + ' <span style="color:#5A7088;">(' + label + ')</span>' +
           htmlImagensItem(r.imagens) + '</div>';
       }
     });
     const pctCap = capPos > 0 ? ((capObt / capPos) * 100).toFixed(0) + '%' : 'N/A';
     const pesoPct = (cap.peso * 100).toFixed(0) + '%';
-    tabelasCapitulos += '<h3 style="color:#0A2F5C; margin:16px 0 6px; font-size:11pt;">' + cap.nome + ' &nbsp; <span style="font-weight:400; color:#666;">' + pctCap + ' · peso ' + pesoPct + ' · (' + capObt + '/' + capPos + ' pts)</span></h3><table class="relatorio-tabela"><thead><tr><th style="width:50px">Cód.</th><th>Requisito</th><th style="width:120px">Resultado</th><th style="width:60px">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    tabelasCapitulos +=
+      '<div class="rel-cap-title"><span>' + cap.nome + '</span><span class="cap-meta">' + pctCap + ' · peso ' + pesoPct + ' · ' + capObt + '/' + capPos + ' pts</span></div>' +
+      '<table class="relatorio-tabela"><thead><tr><th style="width:48px">Cód.</th><th>Requisito</th><th style="width:110px">Resultado</th><th style="width:52px;text-align:center">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
   });
 
   const motivoExtra = dados.classificacao.motivo
-    ? '<p style="font-size:9pt; color:#C62828; margin-top:4px;"><strong>Observação de classificação:</strong> ' + dados.classificacao.motivo + '</p>'
+    ? '<div class="meta-score" style="color:#FFCDD2;">' + dados.classificacao.motivo + '</div>'
     : '';
 
-  return '<div class="relatorio-header"><h1 style="color:#0A2F5C; font-size:16pt; margin-bottom:4px;">Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1><p style="color:#666; font-size:10pt;">Carmak · Sistema de Avaliação de Filiais</p></div>' +
-    '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:12px 0; font-size:10pt;">' +
-    '<div><strong>Filial:</strong> ' + meta.filial + '</div><div><strong>Data:</strong> ' + meta.data + '</div><div><strong>Auditor:</strong> ' + meta.auditor + '</div>' +
-    '<div><strong>Gestor da Filial:</strong> ' + meta.gestor + '</div><div><strong>Pontos Obtidos:</strong> ' + dados.totalObtidos + '</div><div><strong>Pontos Possíveis:</strong> ' + dados.totalPossiveis + '</div></div>' +
-    '<div class="resultado-box" style="background:#F5F5F5; border:2px solid #0A2F5C; border-radius:8px; padding:14px; text-align:center; margin:16px 0;">' +
-    '<div style="font-size:28pt; font-weight:800; color:#0A2F5C;">' + dados.percentual.toFixed(1) + '%</div>' +
-    '<div style="font-size:14pt; margin-top:4px;">' + dados.classificacao.nome + '</div>' + motivoExtra +
-    '<p style="font-size:9pt; color:#666; margin-top:6px;">NC Críticas: ' + dados.ncCriticas + ' · Cálculo: média ponderada por capítulo</p></div>' +
-    '<h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Resultado por Capítulo</h2>' + tabelasCapitulos +
+  const seloSrc = (typeof SELOS_IMG !== 'undefined' && SELOS_IMG[dados.classificacao.chave])
+    ? SELOS_IMG[dados.classificacao.chave]
+    : '';
+  const seloImg = seloSrc
+    ? '<img class="rel-selo" src="' + seloSrc + '" alt="' + dados.classificacao.nome + '">'
+    : '';
+
+  return '' +
+    '<div class="rel-header">' +
+      seloImg +
+      '<div class="rel-header-text">' +
+        '<h1>Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1>' +
+        '<p class="sub">CARMAK · Sistema de Avaliação de Filiais</p>' +
+        '<div class="rel-meta">' +
+          '<div><strong>Filial:</strong> ' + meta.filial + '</div>' +
+          '<div><strong>Data:</strong> ' + meta.data + '</div>' +
+          '<div><strong>Auditor:</strong> ' + meta.auditor + '</div>' +
+          '<div><strong>Gestor da Filial:</strong> ' + meta.gestor + '</div>' +
+          '<div><strong>Pontos Obtidos:</strong> ' + dados.totalObtidos + '</div>' +
+          '<div><strong>Pontos Possíveis:</strong> ' + dados.totalPossiveis + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="rel-score-box">' +
+      '<div>' +
+        '<div class="pct">' + dados.percentual.toFixed(1) + '%</div>' +
+        '<div class="meta-score">Média ponderada por capítulo</div>' +
+      '</div>' +
+      '<div style="text-align:right;">' +
+        '<div class="selo-nome">' + dados.classificacao.nome + '</div>' +
+        '<div class="meta-score">NC Críticas: ' + dados.ncCriticas + '</div>' +
+        motivoExtra +
+      '</div>' +
+    '</div>' +
+    '<div class="rel-section-title">Resultado por Capítulo</div>' +
+    tabelasCapitulos +
     '<div class="page-break"></div>' +
-    '<h2 style="font-size:12pt; color:#C62828; border-bottom:1px solid #CCC; padding-bottom:4px;">Não Conformidades e Parciais</h2>' +
-    '<div class="nc-list">' + (temNC ? listaNCs : '<p style="color:#666;">Nenhuma não conformidade ou parcial registrada.</p>') + '</div>' +
-    (temEvidencia ? '<div class="page-break"></div><h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px;">Evidências fotográficas</h2>' + listaEvidencias : '') +
-    (meta.obsGerais ? '<h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Observações Gerais do Auditor</h2><p style="font-size:10pt; white-space:pre-wrap;">' + meta.obsGerais + '</p>' : '') +
-    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:40px;">' +
-    '<div style="border-top:1px solid #333; padding-top:6px; text-align:center; font-size:9pt;">Auditor<br>' + meta.auditor + '</div>' +
-    '<div style="border-top:1px solid #333; padding-top:6px; text-align:center; font-size:9pt;">Gestor da Filial<br>' + meta.gestor + '</div></div>' +
-    '<p style="margin-top:30px; font-size:8pt; color:#999; text-align:center;">Documento gerado pelo Checklist PGI Carmak · Itens marcados com * são críticos</p>';
+    '<div class="rel-section-title nc">Não Conformidades e Parciais</div>' +
+    '<div class="nc-list">' + (temNC ? listaNCs : '<p style="color:#5A7088;font-size:9pt;">Nenhuma não conformidade ou parcial registrada.</p>') + '</div>' +
+    (temEvidencia ? '<div class="page-break"></div><div class="rel-section-title">Evidências fotográficas</div>' + listaEvidencias : '') +
+    (meta.obsGerais ? '<div class="rel-section-title">Observações Gerais do Auditor</div><p style="font-size:9.5pt; white-space:pre-wrap;">' + meta.obsGerais + '</p>' : '') +
+    '<div class="rel-assinaturas">' +
+      '<div class="linha">Auditor<br><strong>' + meta.auditor + '</strong></div>' +
+      '<div class="linha">Gestor da Filial<br><strong>' + meta.gestor + '</strong></div>' +
+    '</div>' +
+    '<p class="rel-footer">Documento gerado pelo Checklist PGI Carmak · Itens marcados com * são críticos · Layout Safira &amp; Ouro</p>';
 }
+
 
 function gerarESalvarRelatorio() {
   const dados = recalcularTudo();
