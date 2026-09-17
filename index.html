@@ -9,28 +9,28 @@
 <style>
 
 :root{
-  --navy:#0B3B3E;
-  --navy-2:#0F4C52;
-  --blue:#1E7F72;
-  --blue-2:#3FA796;
-  --accent:#3FA796;
-  --tint:#EFF7F4;
-  --tint-2:#F5FBF9;
-  --page:#EFF7F4;
-  --line:#DCEAE6;
-  --line-2:#B8D4CE;
-  --ink:#0E2A2C;
-  --ink-2:#3D5553;
-  --muted:#5E7876;
+  --navy:#0A2F5C;
+  --navy-2:#0E4D8C;
+  --blue:#1A6BB5;
+  --blue-2:#3A8FD4;
+  --accent:#C9A227;
+  --tint:#EEF4FB;
+  --tint-2:#F5F8FC;
+  --page:#EEF4FB;
+  --line:#D0DCEB;
+  --line-2:#A8BDD6;
+  --ink:#0A1F3A;
+  --ink-2:#2A4060;
+  --muted:#5A7088;
   --ok-bg:#E4F5EE; --ok-fg:#1E7F72;
   --w90-bg:#FFF6DF; --w90-fg:#8A6B00;
   --w30-bg:#FFEADD; --w30-fg:#B0500E;
   --late-bg:#FBEAE8; --late-fg:#C6483E;
   --radius:16px;
-  --shadow: 0 8px 24px rgba(11,59,62,0.08);
+  --shadow: 0 8px 24px rgba(10,47,92,0.10);
   --primary: var(--navy);
   --primary-hover: var(--navy-2);
-  --destaque: rgba(30,127,114,0.15);
+  --destaque: rgba(201,162,39,0.18);
   --vermelho: #C6483E;
   --laranja: #B0500E;
   --cinza: var(--ink);
@@ -43,7 +43,7 @@ html,body{margin:0;padding:0;}
 body{
   font-family: 'Inter', system-ui, sans-serif;
   background:
-    radial-gradient(1200px 600px at 100% -10%, rgba(63,167,150,0.10), transparent 60%),
+    radial-gradient(1200px 600px at 100% -10%, rgba(201,162,39,0.12), transparent 60%),
     var(--page);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -69,7 +69,7 @@ button, select, input, textarea{ font-family: inherit; }
 .brand{ display:flex; align-items:center; gap:14px; white-space:nowrap; }
 .brand-logo{ height:28px; width:auto; display:block; }
 .brand-text .t1{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; letter-spacing:.2px; line-height:1.1;}
-.brand-text .t2{ font-size:11px; color:#8FD4C1; letter-spacing:.4px; }
+.brand-text .t2{ font-size:11px; color:#E8C547; letter-spacing:.4px; }
 .tabs{ display:flex; gap:4px; margin-left:8px; }
 .tab-btn{
   appearance:none; border:none; background:transparent; color:rgba(255,255,255,0.72);
@@ -138,7 +138,7 @@ input:focus, select:focus, textarea:focus{
   font-size:10px; font-weight:700; padding:2px 7px; border-radius:5px; margin-left:6px;
 }
 select.resposta{ padding:7px 8px; font-size:12.5px; border-radius:7px; border:1px solid var(--line-2); }
-select.resposta.conforme{ background:var(--ok-bg); border-color:#8FD4C1; color:var(--ok-fg); }
+select.resposta.conforme{ background:var(--ok-bg); border-color:#7BC9A8; color:var(--ok-fg); }
 select.resposta.parcial{ background:var(--w90-bg); border-color:#E0B23A; color:var(--w90-fg); }
 select.resposta.nc{ background:var(--late-bg); border-color:#E57373; color:var(--late-fg); }
 select.resposta.na{ background:var(--off-bg,#EBEDF0); border-color:#B0B8C0; color:#565D6B; }
@@ -266,7 +266,7 @@ select.resposta.na{ background:var(--off-bg,#EBEDF0); border-color:#B0B8C0; colo
   .resumo-bar, .modal-overlay, .toast, .topbar{ display:none !important; }
   .relatorio-print{ max-width:100%; padding:0; }
   table.relatorio-tabela{ width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:9pt; }
-  table.relatorio-tabela th{ background:#0B3B3E; color:#fff; padding:6px 8px; text-align:left; }
+  table.relatorio-tabela th{ background:#0A2F5C; color:#fff; padding:6px 8px; text-align:left; }
   table.relatorio-tabela td{ border:1px solid #DDD; padding:5px 8px; }
   table.relatorio-tabela tr:nth-child(even){ background:#FAFAFA; }
   .nc-item{ border-left:3px solid #C6483E; padding:6px 10px; margin-bottom:6px; background:#FFF8F8; }
@@ -417,30 +417,30 @@ const CAPITULOS = [
     { cod: '2.2', texto: 'Os treinamentos são planejados conforme as necessidades identificadas?', critico: false },
   ]},
   { id: 'c3', nome: '3. Meio Ambiente', perguntas: [
-    { cod: '3.1', texto: 'Existe política ambiental para segregação de resíduos sólidos? (MTR, LO, DMR, demais documentos)', critico: true },
+    { cod: '3.1', texto: 'Existe política ambiental para segregação de resíduos sólidos?', critico: true },
     { cod: '3.2', texto: 'Existe licença de operação válida?', critico: true },
-    { cod: '3.3', texto: 'Existe procedimento documentado para descarte de resíduos?', critico: true },
-    { cod: '3.4', texto: 'Há material absorvente disponível e controlado? (Mantas Absorventes ou Serragem e Kit de Mitigação)', critico: true },
-    { cod: '3.5', texto: 'Existe canaletas responsáveis pela contenção de resíduos perigosos? (Ex.: Óleo → caixa separadora)', critico: false },
-    { cod: '3.6', texto: 'Há uma área designada para descarte de resíduos? Ela está conforme?', critico: true },
-    { cod: '3.7', texto: 'Incidentes ambientais são registrados e tratados? (Ex.: Relatório ambiental)', critico: false },
+    { cod: '3.3', texto: 'Existe procedimento documentado para descarte de resíduos?', critico: false },
+    { cod: '3.4', texto: 'Há material absorvente disponível e controlado? (Kit de Mitigação)', critico: true },
+    { cod: '3.5', texto: 'Existe contenção para resíduos perigosos?', critico: false },
+    { cod: '3.6', texto: 'Há uma área designada para descarte de resíduos?', critico: true },
+    { cod: '3.7', texto: 'Incidentes ambientais são registrados e tratados?', critico: false },
   ]},
   { id: 'c4', nome: '4. Segurança', perguntas: [
     { cod: '4.1', texto: 'Existe política de segurança e responsável definido?', critico: false },
     { cod: '4.2', texto: 'Está sendo aplicado DSS (Diálogo Semanal de Segurança)?', critico: true },
-    { cod: '4.3', texto: 'EPIs e EPCs estão disponíveis e organizados?', critico: true },
-    { cod: '4.4', texto: 'As qualificações obrigatórias dos colaboradores estão controladas? (Ex.: NRs)', critico: true },
+    { cod: '4.3', texto: 'EPIs e EPCs estão disponíveis e organizados?', critico: false },
+    { cod: '4.4', texto: 'As qualificações obrigatórias dos colaboradores estão controladas? (NRs)', critico: true },
     { cod: '4.5', texto: 'Existe check-list de pré-operação para equipamentos aplicáveis?', critico: false },
     { cod: '4.6', texto: 'Equipamentos possuem inspeções periódicas válidas?', critico: false },
     { cod: '4.7', texto: 'O kit de primeiros socorros está adequado?', critico: true },
     { cod: '4.8', texto: 'Os extintores estão identificados e dentro da validade?', critico: true },
-    { cod: '4.9', texto: 'Existe PAE (Plano de Atendimento a Emergências), aprovado e publicado?', critico: true },
+    { cod: '4.9', texto: 'Existe PAE (Plano de Atendimento à Emergências), aprovado e publicado?', critico: false },
     { cod: '4.10', texto: 'Existe PPCI (Alvará de Proteção Contra Incêndio), válido?', critico: true },
-    { cod: '4.11', texto: 'Acidentes são registrados e possuem análise de causa e ações?', critico: false },
+    { cod: '4.11', texto: 'Acidentes são registrados e possuem análise de causa e ações?', critico: true },
   ]},
   { id: 'c5', nome: '5. Oficina', perguntas: [
     { cod: '5.1', texto: 'O piso da oficina está limpo e sem rachaduras excessivas?', critico: false },
-    { cod: '5.2', texto: 'Os boxes de serviço estão demarcados?', critico: false },
+    { cod: '5.2', texto: 'Os boxes de serviço estão demarcados?', critico: true },
     { cod: '5.3', texto: 'A ventilação da oficina é adequada?', critico: false },
     { cod: '5.4', texto: 'A iluminação da oficina é adequada?', critico: false },
     { cod: '5.5', texto: 'Ferramentas básicas estão disponíveis e organizadas?', critico: false },
@@ -456,6 +456,21 @@ const CAPITULOS = [
     { cod: '6.1', texto: 'A van possui identificação visual adequada?', critico: true },
     { cod: '6.2', texto: 'A condição interna e externa da van é adequada?', critico: true },
     { cod: '6.3', texto: 'Ferramentas e peças possuem local definido e identificado?', critico: true },
+  ]},
+  { id: 'c7', nome: '7. Estoque / Peças', perguntas: [
+    { cod: '7.1', texto: 'Existe controle de entrada e saída de peças (sistema ou planilha)?', critico: false },
+    { cod: '7.2', texto: 'O estoque está organizado, identificado e com 5S aplicado?', critico: false },
+    { cod: '7.3', texto: 'Existe segregação entre peças novas, usadas e sucata?', critico: false },
+    { cod: '7.4', texto: 'Peças de alto valor possuem controle de acesso / inventário periódico?', critico: false },
+    { cod: '7.5', texto: 'Existe procedimento de descarte / devolução de peças?', critico: false },
+    { cod: '7.6', texto: 'As FISPQ / FDS das peças e fluidos estão disponíveis no estoque?', critico: false },
+  ]},
+  { id: 'c8', nome: '8. Atendimento ao Cliente', perguntas: [
+    { cod: '8.1', texto: 'Existe padrão de atendimento (script / checklist) para recepção e entrega do veículo?', critico: false },
+    { cod: '8.2', texto: 'O cliente é informado sobre o prazo e o status da ordem de serviço?', critico: false },
+    { cod: '8.3', texto: 'Existe pesquisa de satisfação ou registro de reclamações?', critico: false },
+    { cod: '8.4', texto: 'As reclamações / retrabalhos são registrados e tratados?', critico: false },
+    { cod: '8.5', texto: 'O ambiente de atendimento (recepção) está limpo, organizado e com comunicação visual adequada?', critico: false },
   ]},
 ];
 
@@ -743,31 +758,31 @@ function montarHTMLRelatorio(dados, meta, respostas) {
       if (nImg > 0) {
         temEvidencia = true;
         listaEvidencias += '<div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #EEE;">' +
-          '<strong style="color:#0B3B3E;">' + p.cod + '</strong> — ' + p.texto + ' <span style="color:#666;">(' + label + ')</span>' +
+          '<strong style="color:#0A2F5C;">' + p.cod + '</strong> — ' + p.texto + ' <span style="color:#666;">(' + label + ')</span>' +
           htmlImagensItem(r.imagens) + '</div>';
       }
     });
-    tabelasCapitulos += '<h3 style="color:#0B3B3E; margin:16px 0 6px; font-size:11pt;">' + cap.nome + ' &nbsp; <span style="font-weight:400; color:#666;">(' + capObt + ' / ' + capPos + ' pts)</span></h3><table class="relatorio-tabela"><thead><tr><th style="width:50px">Cód.</th><th>Requisito</th><th style="width:120px">Resultado</th><th style="width:60px">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    tabelasCapitulos += '<h3 style="color:#0A2F5C; margin:16px 0 6px; font-size:11pt;">' + cap.nome + ' &nbsp; <span style="font-weight:400; color:#666;">(' + capObt + ' / ' + capPos + ' pts)</span></h3><table class="relatorio-tabela"><thead><tr><th style="width:50px">Cód.</th><th>Requisito</th><th style="width:120px">Resultado</th><th style="width:60px">Pontos</th></tr></thead><tbody>' + rows + '</tbody></table>';
   });
 
   const motivoExtra = dados.classificacao.motivo
     ? '<p style="font-size:9pt; color:#C62828; margin-top:4px;"><strong>Observação de classificação:</strong> ' + dados.classificacao.motivo + '</p>'
     : '';
 
-  return '<div class="relatorio-header"><h1 style="color:#0B3B3E; font-size:16pt; margin-bottom:4px;">Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1><p style="color:#666; font-size:10pt;">Carmak · Sistema de Avaliação de Filiais</p></div>' +
+  return '<div class="relatorio-header"><h1 style="color:#0A2F5C; font-size:16pt; margin-bottom:4px;">Relatório de Auditoria — Programa de Gestão Integrada (PGI)</h1><p style="color:#666; font-size:10pt;">Carmak · Sistema de Avaliação de Filiais</p></div>' +
     '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:12px 0; font-size:10pt;">' +
     '<div><strong>Filial:</strong> ' + meta.filial + '</div><div><strong>Data:</strong> ' + meta.data + '</div><div><strong>Auditor:</strong> ' + meta.auditor + '</div>' +
     '<div><strong>Gestor da Filial:</strong> ' + meta.gestor + '</div><div><strong>Pontos Obtidos:</strong> ' + dados.totalObtidos + '</div><div><strong>Pontos Possíveis:</strong> ' + dados.totalPossiveis + '</div></div>' +
-    '<div class="resultado-box" style="background:#F5F5F5; border:2px solid #0B3B3E; border-radius:8px; padding:14px; text-align:center; margin:16px 0;">' +
-    '<div style="font-size:28pt; font-weight:800; color:#0B3B3E;">' + dados.percentual.toFixed(1) + '%</div>' +
+    '<div class="resultado-box" style="background:#F5F5F5; border:2px solid #0A2F5C; border-radius:8px; padding:14px; text-align:center; margin:16px 0;">' +
+    '<div style="font-size:28pt; font-weight:800; color:#0A2F5C;">' + dados.percentual.toFixed(1) + '%</div>' +
     '<div style="font-size:14pt; margin-top:4px;">' + dados.classificacao.nome + '</div>' + motivoExtra +
     '<p style="font-size:9pt; color:#666; margin-top:6px;">NC Críticas: ' + dados.ncCriticas + '</p></div>' +
-    '<h2 style="font-size:12pt; color:#0B3B3E; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Resultado por Capítulo</h2>' + tabelasCapitulos +
+    '<h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Resultado por Capítulo</h2>' + tabelasCapitulos +
     '<div class="page-break"></div>' +
     '<h2 style="font-size:12pt; color:#C62828; border-bottom:1px solid #CCC; padding-bottom:4px;">Não Conformidades e Parciais</h2>' +
     '<div class="nc-list">' + (temNC ? listaNCs : '<p style="color:#666;">Nenhuma não conformidade ou parcial registrada.</p>') + '</div>' +
-    (temEvidencia ? '<div class="page-break"></div><h2 style="font-size:12pt; color:#0B3B3E; border-bottom:1px solid #CCC; padding-bottom:4px;">Evidências fotográficas</h2>' + listaEvidencias : '') +
-    (meta.obsGerais ? '<h2 style="font-size:12pt; color:#0B3B3E; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Observações Gerais do Auditor</h2><p style="font-size:10pt; white-space:pre-wrap;">' + meta.obsGerais + '</p>' : '') +
+    (temEvidencia ? '<div class="page-break"></div><h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px;">Evidências fotográficas</h2>' + listaEvidencias : '') +
+    (meta.obsGerais ? '<h2 style="font-size:12pt; color:#0A2F5C; border-bottom:1px solid #CCC; padding-bottom:4px; margin-top:20px;">Observações Gerais do Auditor</h2><p style="font-size:10pt; white-space:pre-wrap;">' + meta.obsGerais + '</p>' : '') +
     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:40px;">' +
     '<div style="border-top:1px solid #333; padding-top:6px; text-align:center; font-size:9pt;">Auditor<br>' + meta.auditor + '</div>' +
     '<div style="border-top:1px solid #333; padding-top:6px; text-align:center; font-size:9pt;">Gestor da Filial<br>' + meta.gestor + '</div></div>' +
